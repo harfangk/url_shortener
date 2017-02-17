@@ -6,7 +6,12 @@ defmodule UrlShortener.Router do
 
   get "/" do
     conn
-    |> send_resp(200, "Root")
+    |> send_resp(200, "Url shortener microservice app. Refer to https://github.com/harfangk/url_shortene://github.com/harfangk/url_shortener for further explanation.")
+  end
+
+  post "/new" do
+    conn
+    |> Plug.Conn.fetch_query_params()
   end
 
   match _ do
