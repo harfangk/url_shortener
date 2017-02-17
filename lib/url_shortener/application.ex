@@ -12,6 +12,7 @@ defmodule UrlShortener.Application do
     children = [
       # Starts a worker by calling: UrlShortener.Worker.start_link(arg1, arg2, arg3)
       # worker(UrlShortener.Worker, [arg1, arg2, arg3]),
+      worker(UrlShortener.Router, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
