@@ -1,4 +1,4 @@
-defmodule UrlShortener.Router do
+defmodule UrlShortener.Web do
   use Plug.Router
 
   plug :match
@@ -6,7 +6,7 @@ defmodule UrlShortener.Router do
 
   get "/" do
     conn
-    |> send_resp(200, "Url shortener microservice app. Refer to https://github.com/harfangk/url_shortene://github.com/harfangk/url_shortener for further explanation.")
+    |> send_resp(200, "Url shortener microservice app. Refer to https://github.com/harfangk/url_shortener for further information.")
   end
 
   post "/new" do
@@ -20,6 +20,6 @@ defmodule UrlShortener.Router do
   end
 
   def start_link do
-    {:ok, _} = Plug.Adapters.Cowboy.http(UrlShortener.Router, [])
+    {:ok, _} = Plug.Adapters.Cowboy.http(__MODULE__, [])
   end
 end
