@@ -3,8 +3,10 @@ defmodule UrlShortener.Base62 do
            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
-  def encode(n) do
-    encode_helper(n)
+  def encode(s) do
+    |> String.to_char_list()
+    |> Enum.sum()
+    |> encode_helper()
     |> List.to_string()
   end
 

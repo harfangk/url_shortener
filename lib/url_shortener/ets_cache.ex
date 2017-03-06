@@ -25,11 +25,7 @@ defmodule UrlShortener.EtsCache do
   end
 
   def handle_call({:insert_new_url, full_url}, _, state) do
-    shortened_url = 
-      full_url
-      |> String.to_char_list()
-      |> Enum.sum()
-      |> UrlShortener.Base62.encode()
+    shortened_url = UrlShortener.Base62.encode(full_url)
     :ets.insert(:high_priority, {shortened_url, full_url})
     Enum.each([:medium_priority, :low_priority], &update_cache_priority(&1, {shortened_url, full_url}))
     {:reply, {shortened_url, full_url}, state}
