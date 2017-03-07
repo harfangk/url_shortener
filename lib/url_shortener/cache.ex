@@ -1,27 +1,16 @@
-defmodule UrlShortener.EtsCache do
+defmodule UrlShortener.Cache do
   use GenServer
 
   def start_link() do
-    GenServer.start_link(__MODULE__, nil, name: :ets_cache)
-  end
-
-  def init(_) do
-    :ets.new(:high_priority, [:named_table])
-    :ets.new(:medium_priority, [:named_table])
-    :ets.new(:low_priority, [:named_table])
-    {:ok, nil}
+    GenServer.start_link(__MODULE__, nil, name: :cache)
   end
 
   def lookup_full_url(shortened_url) do
-    GenServer.call(:ets_cache, {:lookup_full_url, shortened_url})
+    lookup(:high_priority, shortened_url)
   end
 
   def insert_new_url(full_url) do
-    GenServer.call(:ets_cache, {:insert_new_url, full_url})
-  end
-
-  def handle_call({:lookup_full_url, shortened_url}, _, state) do
-    {:reply, lookup(:high_priority, shortened_url), state}
+    GenServer.call(:cache, {:insert_new_url, full_url})
   end
 
   def handle_call({:insert_new_url, full_url}, _, state) do
@@ -56,18 +45,14 @@ defmodule UrlShortener.EtsCache do
     end
   end
 
-  defp update_cache_priority(cache_table, {shortened_url, _} = kv_pair) do
-    :ets.delete(cache_table, shortened_url)
-    :ets.insert(:high_priority, kv_pair)
-    renew_cache_tables()
+  defp update_cache_priority(cache_table, kv_pair) do
+    GenServer.cast(:cache, {:update_cache_priority, cache_table, kv_pair})
   end
 
-  defp renew_cache_tables() do
-    if :ets.info(:high_priority)[:size] > 10000 do
-      :ets.delete(:low_priority)
-      :ets.rename(:medium_priority, :low_priority)
-      :ets.rename(:high_priority, :medium_priority)
-      :ets.new(:high_priority, [:named_table])
-    end
+  def handle_cast({:update_cache_priority, cache_table, {shortened_url, _} = kv_pair}, state) do
+    :ets.delete(cache_table, shortened_url)
+    :ets.insert(:high_priority, kv_pair)
+    UrlShortener.CacheOwner.renew_cache_tables()
+    {:noreply, state}
   end
 end
