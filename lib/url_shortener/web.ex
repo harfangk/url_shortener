@@ -1,6 +1,10 @@
 defmodule UrlShortener.Web do
   use Plug.Router
 
+  plug Plug.Parsers, parsers: [:json],
+                     pass: ["application/json"],
+                     json_decoder: Poison
+
   plug :match
   plug :dispatch
 
@@ -11,7 +15,8 @@ defmodule UrlShortener.Web do
 
   post "/new" do
     conn
-    |> Plug.Conn.fetch_query_params()
+    |> IO.inspect()
+    |> send_resp(200, "/new endpoint is reached")
   end
 
   match _ do
