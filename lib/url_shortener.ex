@@ -23,7 +23,7 @@ defmodule UrlShortener do
         {:ok, response}
       _ ->
         response = Poison.Encoder.encode(%{errors: [
-                                             %{status: 404,
+                                             %{status: 400,
                                                source: %{pointer: "/data/url"},
                                                title: "Invalid Key",
                                                detail: "Url should be sent in url key"
