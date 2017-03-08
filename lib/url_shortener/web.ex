@@ -2,7 +2,7 @@ defmodule UrlShortener.Web do
   use Plug.Router
 
   plug Plug.Parsers, parsers: [:json],
-                     pass: ["application/json"],
+                     pass: ["application/vnd.api+json"],
                      json_decoder: Poison
 
   plug :match
@@ -14,10 +14,17 @@ defmodule UrlShortener.Web do
   end
 
   post "/new" do
-    IO.inspect(conn)
     result = UrlShortener.create_short_url(conn.params)
-    conn
-    |> send_resp(200, "/new endpoint is reached")
+    case result do
+      {:ok, response} ->
+        conn
+        |> put_resp_header("Content-Type", "application/vnd.api+json")
+        |> send_resp(200, response)
+      {:error, response} ->
+        conn
+        |> put_resp_header("Content-Type", "application/vnd.api+json")
+        |> send_resp(400, response)
+    end
   end
 
   match _ do
