@@ -9,15 +9,14 @@ defmodule UrlShortener.Cache do
     lookup(:high_priority, shortened_url)
   end
 
-  def insert_new_url(full_url) do
-    GenServer.call(:cache, {:insert_new_url, full_url})
+  def insert_new_url_pair(shortened_url, full_url) do
+    GenServer.cast(:cache, {:insert_new_url, shortened_url, full_url})
   end
 
-  def handle_call({:insert_new_url, full_url}, _, state) do
-    shortened_url = UrlShortener.Base62.encode(full_url)
+  def handle_cast({:insert_new_url, shortened_url, full_url}, state) do
     :ets.insert(:high_priority, {shortened_url, full_url})
     Enum.each([:medium_priority, :low_priority], &update_cache_priority(&1, {shortened_url, full_url}))
-    {:reply, {shortened_url, full_url}, state}
+    {:noreply, %{short_url: shortened_url, full_url: full_url}, state}
   end
 
   defp lookup(:high_priority, shortened_url) do

@@ -14,8 +14,9 @@ defmodule UrlShortener.Web do
   end
 
   post "/new" do
+    IO.inspect(conn)
+    result = UrlShortener.create_short_url(conn.params)
     conn
-    |> IO.inspect()
     |> send_resp(200, "/new endpoint is reached")
   end
 
