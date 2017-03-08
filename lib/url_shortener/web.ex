@@ -13,6 +13,22 @@ defmodule UrlShortener.Web do
     |> send_resp(200, "Url shortener microservice app. Refer to https://github.com/harfangk/url_shortener for further information.")
   end
 
+  get "/:shortened_url" do
+    result = UrlShortener.lookup_full_url(conn.params)
+    case result do
+      {:ok, response} ->
+        conn
+        |> put_resp_header("Content-Type", "application/vnd.api+json")
+        |> send_resp(200, response)
+      {:error, response} ->
+        conn
+        |> put_resp_header("Content-Type", "application/vnd.api+json")
+        |> send_resp(400, response)
+    end
+    conn
+    |> send_resp(200, "Yeah")
+  end
+
   post "/new" do
     result = UrlShortener.create_short_url(conn.params)
     case result do

@@ -32,4 +32,23 @@ defmodule UrlShortener do
         {:error, response}
     end
   end
+
+  def lookup_full_url(%{"shortened_url" => shortened_url}) do
+    case UrlShortener.Cache.lookup(:high_priority, shortened_url) do
+      {:ok, {shortened_url, full_url}} ->
+        response = Poison.Encoder.encode(%{data: [
+                                             %{shortened_url: shortened_url, full_url: full_url}
+                                           ]}, [])
+        {:ok, response}
+      {:error, message} ->
+        response = Poison.Encoder.encode(%{errors: [
+                                             %{status: 404,
+                                               source: %{pointer: "/data/url"},
+                                               title: "URL not found",
+                                               detail: message
+                                             }
+                                           ]}, [])
+        {:error, response}
+    end
+  end
 end
