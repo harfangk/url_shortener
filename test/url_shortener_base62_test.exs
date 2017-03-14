@@ -1,6 +1,6 @@
 defmodule UrlShortener.Base62Test do
   use ExUnit.Case
-  doctest UrlShortener
+  doctest UrlShortener.Base62
 
   alias UrlShortener.Base62 
 
