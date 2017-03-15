@@ -12,8 +12,8 @@ defmodule UrlShortener.Application do
     children = [
       # Starts a worker by calling: UrlShortener.Worker.start_link(arg1, arg2, arg3)
       # worker(UrlShortener.Worker, [arg1, arg2, arg3]),
-      worker(UrlShortener.CacheOwner, []),
-      worker(UrlShortener.Cache, []),
+      worker(UrlShortener.EtsCache, []),
+      worker(UrlShortener.EtsCache.Interface, []),
       worker(UrlShortener.Web, []),
     ]
 
