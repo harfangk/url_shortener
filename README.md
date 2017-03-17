@@ -1,19 +1,19 @@
 # UrlShortener
 
-**TODO: Add description**
+A simple Url Shortener toy app written in Elixir for new Elixir learners to
+take a look at. 
 
-## Installation
+It consists of six modules:
+* `UrlShortener`: holds public functions for interfacing with this application
+* `Application`: holds supervision tree for the application
+* `Base62`: transforms full urls into shortened urls using custom base62
+  encoding
+* `EtsCache`: contains three `ETS` tables for storage purpose in a `GenServer`
+  process
+* `EtsCache.Interface`: provides functions for interacting with `EtsCache` 
+* `Web`: provides web interface for this application using `Cowboy`
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `url_shortener` to your list of dependencies in `mix.exs`:
+There are basic tests and doctests for public functions of each module.  
 
-```elixir
-def deps do
-  [{:url_shortener, "~> 0.1.0"}]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/url_shortener](https://hexdocs.pm/url_shortener).
+## Heroku Deployment
 
