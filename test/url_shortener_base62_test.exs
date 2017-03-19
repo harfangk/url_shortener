@@ -1,5 +1,5 @@
 defmodule UrlShortener.Base62Test do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest UrlShortener.Base62
 
   alias UrlShortener.Base62 

@@ -19,7 +19,8 @@ defmodule UrlShortener.EtsCacheTest do
   end
 
   test ":high_priority should be reset when its size is more than 3000" do
-    (1..3001) |> Enum.map(fn(x) -> {x, x} end) |> Enum.map(fn(x) -> :ets.insert(:high_priority, x) end)
+    (1..3001)
+    |> Enum.map(fn(x) -> :ets.insert(:high_priority, {x, x}) end)
     EtsCache.renew_cache_tables() 
     :timer.sleep(1)
     assert :ets.info(:high_priority)[:size] == 0
