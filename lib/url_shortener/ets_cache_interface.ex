@@ -17,18 +17,18 @@ defmodule UrlShortener.EtsCache.Interface do
   Insert a new pair of shortened and full urls. Use gen_server cast to ensure
   there's only one process that handles writing operation.
   """
-  def insert_new_url_pair(shortened_url, full_url) do
-    GenServer.cast(:ets_cache_interface, {:insert_new_url, shortened_url, full_url})
+  def insert_new_url_pair({shortened_url, full_url}) do
+    GenServer.cast(:ets_cache_interface, {:insert_new_url, {shortened_url, full_url}})
   end
 
   defp update_cache_priority(cache_table, kv_pair) do
     GenServer.cast(:ets_cache_interface, {:update_cache_priority, cache_table, kv_pair})
   end
 
-  def handle_cast({:insert_new_url, shortened_url, full_url}, state) do
+  def handle_cast({:insert_new_url, {shortened_url, full_url}}, state) do
     :ets.insert(:high_priority, {shortened_url, full_url})
     Enum.each([:medium_priority, :low_priority], &update_cache_priority(&1, {shortened_url, full_url}))
-    {:noreply, %{short_url: shortened_url, full_url: full_url}, state}
+    {:noreply, state}
   end
 
   def handle_cast({:update_cache_priority, cache_table, {shortened_url, _} = kv_pair}, state) do
@@ -43,14 +43,14 @@ defmodule UrlShortener.EtsCache.Interface do
   from high to low priority iteratively. Lookup operation can be called from 
   multiple processes. 
   """
-  def lookup(:high_priority, shortened_url) do
+  def lookup(shortened_url) do
     case :ets.lookup(:high_priority, shortened_url) do
       [{^shortened_url, full_url}] -> {:ok, {shortened_url, full_url}}
       _ -> lookup(:medium_priority, shortened_url)
     end
   end
 
-  def lookup(:medium_priority, shortened_url) do
+  defp lookup(:medium_priority, shortened_url) do
     case :ets.lookup(:medium_priority, shortened_url) do
       [{^shortened_url, full_url}] ->
         update_cache_priority(:medium_priority, {shortened_url, full_url})
@@ -59,7 +59,7 @@ defmodule UrlShortener.EtsCache.Interface do
     end
   end
   
-  def lookup(:low_priority, shortened_url) do
+  defp lookup(:low_priority, shortened_url) do
     case :ets.lookup(:low_priority, shortened_url) do
       [{^shortened_url, full_url}] ->
         update_cache_priority(:low_priority, {shortened_url, full_url})

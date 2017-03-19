@@ -16,7 +16,7 @@ defmodule UrlShortener do
     case input do
       %{"data" => [%{"url" => full_url}]} -> 
         shortened_url = UrlShortener.Base62.encode(full_url)
-        UrlShortener.EtsCache.Interface.insert_new_url_pair(shortened_url, full_url)
+        UrlShortener.EtsCache.Interface.insert_new_url_pair({shortened_url, full_url})
         response = Poison.Encoder.encode(%{data: [
                                              %{shortened_url: shortened_url, full_url: full_url}
                                            ]}, [])
@@ -34,7 +34,7 @@ defmodule UrlShortener do
   end
 
   def lookup_full_url(%{"shortened_url" => shortened_url}) do
-    case UrlShortener.EtsCache.Interface.lookup(:high_priority, shortened_url) do
+    case UrlShortener.EtsCache.Interface.lookup(shortened_url) do
       {:ok, {shortened_url, full_url}} ->
         response = Poison.Encoder.encode(%{data: [
                                              %{shortened_url: shortened_url, full_url: full_url}
