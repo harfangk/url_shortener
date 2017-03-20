@@ -1,7 +1,5 @@
 defmodule UrlShortener.Web do
   use Plug.Router
-  use Plug.Debugger
-  use Plug.ErrorHandler
 
   plug Plug.Parsers, parsers: [:json],
                      pass: ["application/vnd.api+json"],
@@ -53,9 +51,5 @@ defmodule UrlShortener.Web do
 
   def start_link do
     {:ok, _} = Plug.Adapters.Cowboy.http(__MODULE__, [])
-  end
-
-  def handle_errors(conn, %{kind: _kind, reason: _reason, stack: _stack}) do
-    send_resp(conn, 400, "Something went wrong")
   end
 end
