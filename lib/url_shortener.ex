@@ -1,16 +1,16 @@
 defmodule UrlShortener do
   @moduledoc """
-  Documentation for UrlShortener.
+  This is the public interface for UrlShortener. It provides two functions for
+  interacting with the app:
+  * create_short_url/1
+  * lookup_full_url/1
+  Both the request and response follow the JSON API format.
   """
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> UrlShortener.hello
-      :world
-
+  Create shortened url of the given full url, store the pair in ETS table, then 
+  respond with the pair of shortened url and full url.
+  Both the request and response are in JSON API format and need some wrapper JSON keys.
   """
   def create_short_url(input) do
     case input do
@@ -26,13 +26,17 @@ defmodule UrlShortener do
                                              %{status: 400,
                                                source: %{pointer: "/data/url"},
                                                title: "Invalid Key",
-                                               detail: "Url should be sent in url key"
+                                               detail: "Url should be submitted under the url key"
                                              }
                                            ]}, [])
         {:error, response}
     end
   end
 
+  @doc """
+  Lookup the full url of the given shortened_url. 
+  Both the request and response are in JSON API format and need some wrapper JSON keys.
+  """
   def lookup_full_url(%{"shortened_url" => shortened_url}) do
     case UrlShortener.EtsCache.Interface.lookup(shortened_url) do
       {:ok, {shortened_url, full_url}} ->
