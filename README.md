@@ -13,7 +13,44 @@ It consists of six modules:
 * `EtsCache.Interface`: provides functions for interacting with `EtsCache` 
 * `Web`: provides web interface for this application using `Cowboy`
 
-There are basic tests and doctests for public functions of each module.  
+There are basic tests and doctests for public functions of each module. 
 
-## Heroku Deployment
+# How to Use
 
+This application uses JSON API format, so all requests should follow that.
+
+## `/new` 
+
+This route takes HTTP POST request formatted like:
+
+```json
+{
+  "data": [
+            {"url": "http://elixir-lang.org/"}
+          ]
+}
+```
+
+And returns: 
+
+```json
+{
+  "data": [
+            {"shortened_url":"ty","full-url": "http://elixir-lang.org/"}
+          ]
+}
+```
+
+## `/:shortened_url`
+
+This route takes HTTP GET request with shortened url in the address.
+
+`/ty` returns:
+
+```json
+{
+  "data": [
+            {"shortened_url":"ty","full-url": "http://elixir-lang.org/"}
+          ]
+}
+```
