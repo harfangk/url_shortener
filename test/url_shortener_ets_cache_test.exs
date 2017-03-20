@@ -14,6 +14,7 @@ defmodule UrlShortener.EtsCacheTest do
     :ets.delete_all_objects(:high_priority)
     initial_size = :ets.info(:high_priority)[:size]
     EtsCache.renew_cache_tables() 
+    :sys.get_state(:ets_cache)
     later_size = :ets.info(:high_priority)[:size]
     assert initial_size == later_size
   end
@@ -22,7 +23,7 @@ defmodule UrlShortener.EtsCacheTest do
     (1..3001)
     |> Enum.map(fn(x) -> :ets.insert(:high_priority, {x, x}) end)
     EtsCache.renew_cache_tables() 
-    :timer.sleep(1)
+    :sys.get_state(:ets_cache)
     assert :ets.info(:high_priority)[:size] == 0
   end
 end

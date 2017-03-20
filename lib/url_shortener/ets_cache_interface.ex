@@ -21,7 +21,7 @@ defmodule UrlShortener.EtsCache.Interface do
     GenServer.cast(:ets_cache_interface, {:insert_new_url, {shortened_url, full_url}})
   end
 
-  defp update_cache_priority(cache_table, kv_pair) do
+  def update_cache_priority(cache_table, kv_pair) do
     GenServer.cast(:ets_cache_interface, {:update_cache_priority, cache_table, kv_pair})
   end
 
