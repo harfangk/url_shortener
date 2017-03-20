@@ -50,6 +50,15 @@ defmodule UrlShortener.Web do
   end
 
   def start_link do
-    {:ok, _} = Plug.Adapters.Cowboy.http(__MODULE__, [])
+    {:ok, _} = Plug.Adapters.Cowboy.http(__MODULE__, [], port: get_port())
+  end
+
+  defp get_port() do
+    port_env_variable = System.get_env("PORT")
+    if is_nil(port_env_variable) do
+      4000
+    else
+      String.to_integer(port_env_variable)
+    end
   end
 end
